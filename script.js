@@ -1,37 +1,44 @@
-let facts = [
-    "Crocodiles are reptiles that belong to the family Crocodylidae.",
-    "They are known for their powerful jaws and sharp teeth.",
-    "Crocodiles can live for over 70 years in the wild.",
-    "They are ectothermic, meaning their body temperature is regulated by their environment.",
-    "Crocodiles are excellent swimmers."
+const facts = [
+    { fact: "Honey never spoils." },
+    { fact: "Bananas are berries." },
+    { fact: "A group of flamingos is called a 'flamboyance'." },
+    { fact: "Octopuses have three hearts." },
+    { fact: "Wombat poop is cube-shaped." }
 ];
 
-let attemptCount = 0;
-const maxAttempts = 3;
-
+let attempts = 0;
 const factDisplay = document.getElementById('factDisplay');
-const button = document.getElementById('factButton');
+const factButton = document.getElementById('factButton');
 
-button.addEventListener('click', () => {
-    if (attemptCount < maxAttempts) {
-        attemptCount++;
-        if (attemptCount === maxAttempts) {
-            alert("You can now click the button to get a fact!");
-        }
+factButton.addEventListener('click', () => {
+    if (attempts < 3) {
+        attempts++;
+        factDisplay.textContent = "You need to get closer to the button!";
+        moveButton();
     } else {
         const randomIndex = Math.floor(Math.random() * facts.length);
-        factDisplay.textContent = facts[randomIndex];
+        factDisplay.textContent = facts[randomIndex].fact;
+        attempts = 0; // Reset attempts after a successful click
     }
 });
 
-// Move button when user approaches
-document.addEventListener('mousemove', (event) => {
-    const buttonRect = button.getBoundingClientRect();
-    const mouseX = event.clientX;
-    const mouseY = event.clientY;
+function moveButton() {
+    const randomX = Math.random() * (window.innerWidth - 100); // 100 is button width
+    const randomY = Math.random() * (window.innerHeight - 50); // 50 is button height
+    factButton.style.position = 'absolute';
+    factButton.style.left = `${randomX}px`;
+    factButton.style.top = `${randomY}px`;
+}
 
-    if (mouseX > buttonRect.left && mouseX < buttonRect.right &&
-        mouseY > buttonRect.top && mouseY < buttonRect.bottom) {
-        button.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
+// Optional: Move button on mouse proximity
+document.addEventListener('mousemove', (event) => {
+    const buttonRect = factButton.getBoundingClientRect();
+    const distance = Math.sqrt(
+        Math.pow(event.clientX - (buttonRect.left + buttonRect.width / 2), 2) +
+        Math.pow(event.clientY - (buttonRect.top + buttonRect.height / 2), 2)
+    );
+
+    if (distance < 200) { // If mouse is within 200px of the button
+        moveButton();
     }
 });
